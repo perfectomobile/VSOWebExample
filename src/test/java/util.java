@@ -5,22 +5,17 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -29,7 +24,6 @@ import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.DriverCommand;
@@ -76,8 +70,8 @@ public class util {
 		{
 			capabilities.setCapability("platformVersion",  device._osVersion);
 		}
-		
-	 	try {
+
+		try {
 			webdriver = new RemoteWebDriver(new URL("https://demo.perfectomobile.com/nexperience/perfectomobile/wd/hub") , capabilities);
 		} catch (Exception e) {
 			String ErrToRep = e.getMessage().substring(0,e.getMessage().indexOf("Command duration")-1);
@@ -89,8 +83,8 @@ public class util {
 
 	}
 
-	 
-	 
+
+
 	public static AppiumDriver getAppiumDriver(device device,String app,String platform,String Cloud,String user,String password,String appLocationToInstall)   {
 
 		AppiumDriver webdriver= null;
@@ -266,7 +260,7 @@ public class util {
 			String PerfectoRepKeyForAll = "";
 			String bandleID = "";
 			String appType = "";
-			
+
 			//
 			try {
 				JSONParser parser = new JSONParser();
@@ -275,26 +269,29 @@ public class util {
 
 				JSONObject jsonObject = (JSONObject) obj;
 
-			 	String source = (String) jsonObject.get("Source");
-			 	appType = (String) jsonObject.get("Application type");
-				PerfectoRepKeyForAll = (String) jsonObject.get("Perfecto Repository");
-				bandleID = (String) jsonObject.get("BundleID");
-
-				JSONArray devicesList = (JSONArray) jsonObject.get("devices");
-
-				if (PerfectoRepKeyForAll.toLowerCase().contains(".apk"))
+				String source = (String) jsonObject.get("Source");
+				appType = (String) jsonObject.get("Application type");
+				if (appType.toLowerCase().equals("native"))
 				{
-					platform = "Android";
-				}
-				else
-				{
-					platform = "ios";
+					PerfectoRepKeyForAll = (String) jsonObject.get("Perfecto Repository");
+					bandleID = (String) jsonObject.get("BundleID");
+
+
+					if (PerfectoRepKeyForAll.toLowerCase().contains(".apk"))
+					{
+						platform = "Android";
+					}
+					else
+					{
+						platform = "ios";
+					}
 				}
 				
 				System.out.println("devices:");
+				JSONArray devicesList = (JSONArray) jsonObject.get("devices");
 				Iterator<JSONObject> iterator = devicesList.iterator();
 				while (iterator.hasNext()) {
-					
+
 					JSONObject dev = (JSONObject) iterator.next().get("device");
 					System.out.println("os"+dev.get("os"));
 					device d = new device((String)dev.get("deviceID"),(String)dev.get("os"),(String)dev.get("osVersion"));
@@ -306,10 +303,10 @@ public class util {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
 
-		 
+
+
+
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -321,18 +318,18 @@ public class util {
 	}
 
 	public static String getVSOReportLib(String repID) {
- 		
+
 		try {
 			String current = new java.io.File( "." ).getCanonicalPath();
 			String repLib = current+File.separator+"Reports";
 			System.out.println("Current dir:"+repLib);
-			
+
 			File dir = new File(repLib);
 			if (!dir.exists())
 			{
 				dir.mkdir();
 			}
-			
+
 			return repLib+File.separator+"rep_"+repID+".html";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -340,7 +337,7 @@ public class util {
 		}
 		return File.separator;
 	}
-	
+
 	public static String getReprtName(String repID,boolean withPath) {
 		if (withPath)
 		{
