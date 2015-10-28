@@ -19,10 +19,13 @@ import org.testng.Reporter;
 
 public class test1 extends basicTest{
 
-	@Test (dataProvider="Devices") 
-	public void f12(String DeviceId) {
-		System.out.println("Test1 in Test"+DeviceId);
-		RemoteWebDriver d = util.getRWD(DeviceId);
+	@Test (dataProvider="PerfectoParams") 
+	public void myTest(PerfectoTestParams params) {
+		System.out.println("Test1 in Test"+params._platform);
+		System.out.println("Test1 in Test"+params._repKey);
+		
+		RemoteWebDriver d = util.getRWD(params._device);
+
 		try {
 			this.execTest(d);
 		} catch (Exception e) {
