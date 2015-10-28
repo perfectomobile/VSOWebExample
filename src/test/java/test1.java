@@ -1,7 +1,6 @@
 package test.java;
 
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,27 +10,26 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import java.io.IOException;
+import org.testng.Reporter;
+
 
 
 
 public class test1 extends basicTest{
 
-
-	@Test (dataProvider="PerfectoParams") 
-	public void SPG(PerfectoTestParams params) {
-		System.out.println("Test1 in Test"+params._platform);
-		System.out.println("Test1 in Test"+params._repKey);
-
-	//	RemoteWebDriver d = util.getAppiumDriver(params._device,params._activityBandle,params._platform,params._cloud,params._user,params._password,params._repKey);
+	@Test (dataProvider="Devices") 
+	public void f12(String DeviceId) {
+		System.out.println("Test1 in Test"+DeviceId);
+		RemoteWebDriver d = util.getRWD(DeviceId);
 		try {
-	//		this.execTest(d);
+			this.execTest(d);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}finally
 		{
-	//		this.endTest(d);
+			this.endTest(d);
 
 		}
 
@@ -40,32 +38,45 @@ public class test1 extends basicTest{
 
 	@Override
 	public void execTest(RemoteWebDriver driver) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println(" IN EXECUTE");
+		Reporter.log(" TEST TO REPORTER");
+		String current = new java.io.File( "." ).getCanonicalPath();
+        System.out.println("***** Current dir:"+current);
+        
+		driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+
+		driver.get("http://www.awwwards.com");
+
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 
-		driver.findElement(By.xpath("//*[@text='Access your SPG Account']")).click();
 
-		driver.findElement(By.xpath("//android.widget.EditText")).sendKeys("perfectomobile");
-		driver.findElement(By.xpath("(//android.widget.EditText)[2]")).sendKeys("Perfecto1");
-		driver.findElement(By.xpath("//android.widget.Button")).click();
 
-		driver.findElement(By.xpath("//android.widget.TextView[@text='Preferred']")).click();
+		// 	WebDriverWait wait = new WebDriverWait(webdriver, 30);
+		// 	wait.until(ExpectedConditions.elementToBeClickable()));
+		driver.findElement(By.xpath("//*[@class='submit']"));
 
-		WebElement mNum = driver.findElement(By.xpath("//android.widget.TextView[contains(@text,'Starpoints')]"));
-		System.out.println("****** Account number :" +mNum.getText());
 
-		driver.findElement(By.xpath("//android.widget.Button[@text='Sign Out']")).click();
+		// click the menu if mobile
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
 
-		driver.findElement(By.xpath("//android.widget.Button[@text='OK']")).click();
+		try {
+			driver.findElement(By.xpath("//*[@class='bt-menu']")).click();;
 
+		} catch (Exception e) {
+			// not a mobile - no menu 
+		}
+		driver.findElement(By.xpath("//*[@class='wrapper-nav']//child::*[text()='Nominees']")).click();;
+
+		driver.findElement(By.xpath(".//*[@class='rollover site'][1]")).click();
 
 
 	}
 
 	@Override
 	public void beforeTest() throws Exception {
-
-
+		// TODO Auto-generated method stub
 
 	}
 
@@ -74,23 +85,20 @@ public class test1 extends basicTest{
 
 	@Override
 	public void endTest(RemoteWebDriver driver) {
-
-
-
-		String devId = (String) driver.getCapabilities().getCapability("deviceName");
-
 		//close the test  
-		try{
+		try {
+			String devId = (String) driver.getCapabilities().getCapability("deviceName");
 			driver.close();				
-			util.downloadReport(driver, "pdf","VSO_SPG_"+devId);	
+			util.downloadReport(driver, "pdf", devId +"MS");	
 
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
-		}finally
+			//htmlReporter.addLine(_RWD,"FIRST test", deviceID,util.getReprtName(deviceID, true), rc,"");
+		} catch (IOException e) 
 		{
-
+			e.printStackTrace();
+		}
+		finally
+		{
+		
 			try{
 				driver.quit();
 
@@ -99,9 +107,7 @@ public class test1 extends basicTest{
 				//  driver closed 
 			}
 
-
-		} 
-
+		}
 
 	}
 
