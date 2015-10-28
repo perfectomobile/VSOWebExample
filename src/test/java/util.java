@@ -5,17 +5,22 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.json.simple.JSONArray;
@@ -24,6 +29,7 @@ import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.DriverCommand;
@@ -77,8 +83,6 @@ public class util {
 			String ErrToRep = e.getMessage().substring(0,e.getMessage().indexOf("Command duration")-1);
 			System.out.println(ErrToRep);
 			return (null);
-
-
 
 		}
 		return webdriver;
@@ -136,7 +140,7 @@ public class util {
 			webdriver = new AndroidDriver(new URL(Cloud+"/nexperience/perfectomobile/wd/hub") , capabilities);
 		} catch (Exception e) {
 			String ErrToRep = e.getMessage().substring(0,e.getMessage().indexOf("Command duration")-1);
-			System.out.println(ErrToRep+" "+device._id+",os"+device._os+" version:"+device._osVersion);
+			System.out.println(ErrToRep);
 			return (null);
 
 
@@ -214,43 +218,7 @@ public class util {
 
 
 
-	public static List <String> getDevieListold()
-	{
-		List<String> devices = new ArrayList();
-		System.out.println("EXECUET TEST BUILD THE LIST FROM THE FILE v2");
-		BufferedReader br;
-		try {
-			File f = new File("..\\..\\..\\testConfigFiles\\config1.txt");
 
-			br = new BufferedReader(new FileReader(f));
-			String line = null;  
-			while ((line = br.readLine()) != null)  
-			{  
-				line = line.trim();
-
-				if (line.length() >2)
-				{
-					String cleanC = line.substring(1,2);
-					line = line.replace(cleanC, "");
-				}
-
-				if (line.startsWith("device"))
-				{ 
-					String id = line.substring(7);
-					System.out.println("ID >>"+id);
-					devices.add(id);
-				} 				
-			} 	
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
-
-		return devices;
-
-	}
-
-	
 	public static void downloadReport(RemoteWebDriver driver, String type, String fileName) throws IOException {
 		try { 
 			String command = "mobile:report:download"; 
@@ -283,10 +251,8 @@ public class util {
 			{
 				String current = new java.io.File( "." ).getCanonicalPath();
 				System.out.println("Current dir:"+current);
-				System.out.println("file:"+".."+File.separator +".."+File.separator +"config1.txt");
 				// on OS the file will be on folder app on Win two so i check if file exist 
-				f = new File(".."+File.separator +"config1.txt");
-
+				f = new File(".."+File.separator +"PerfectoConfigExe.json");
 			}else
 
 			{
